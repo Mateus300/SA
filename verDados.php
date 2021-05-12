@@ -14,7 +14,7 @@
         $id = $nome = $cpf = $genero = $data = $email = $rua = $numCasa = $bairro = $cep = $cidade = $estado = "";
 
         if($coluna == 'id' || $coluna == 'cpf' || $coluna == 'numCasa' || $coluna == 'cep'){
-            $query_select = "SELECT * FROM tb_pessoa as p inner join tb_endereco as e on p.id = e.id_pessoa WHERE $coluna = '$valor_procura' limit 1";
+            $query_select = "SELECT * FROM tb_pessoa as p inner join tb_endereco as e on p.id = e.id_pessoa WHERE p.$coluna = '$valor_procura' limit 1";
         }else{
             $query_select = "SELECT * FROM tb_pessoa as p inner join tb_endereco as e on p.id = e.id_pessoa WHERE $coluna LIKE '%$valor_procura%' limit 1";
         }
@@ -28,9 +28,9 @@
                 $nome = $re['nome'];
                 $cpf = $re['cpf']; 
                 $genero = $re['genero'];
-                $data = $re['data_nascimento'];
+                $data = $re['dt_nascimento'];
                 $email = $re['email'];
-                $rua = $re['numCasa'];
+                $rua = $re['rua'];
                 $numCasa = $re['numCasa'];
                 $bairro = $re['bairro'];
                 $cep = $re['cep'];
@@ -57,6 +57,7 @@
         require_once "conexao.php";
 
         $query_select = "";
+        
 
         $id = $nome = $cpf = $genero = $data = $email = $rua = $numCasa = $bairro = $cep = $cidade = $estado = "";
 
@@ -64,7 +65,20 @@
         $resultado_query = $con->query($query_select);
 
         if($resultado_query){
-            
+            foreach($resultado_query as $re){
+                $id = $re['id'];
+                $nome = $re['nome'];
+                $cpf = $re['cpf']; 
+                $genero = $re['genero'];
+                $data = $re['dt_nascimento'];
+                $email = $re['email'];
+                $rua = $re['rua'];
+                $numCasa = $re['numCasa'];
+                $bairro = $re['bairro'];
+                $cep = $re['cep'];
+                $cidade = $re['cidade'];
+                $estado = $re['estado'];
+            }
         }else{
             echo "<p class='alert alert-danger'>Erro ao pesquisar!</p>";
         }
@@ -92,18 +106,18 @@
         <tbody>
             <?php foreach($resultado_query as $res){ ?>
                 <tr>
-                    <td><?php echo $id = $res['id'];;?></td>
-                    <td><?php echo $nome = $res['nome'];;?></td>
-                    <td><?php echo $cpf = $res['cpf'];;?></td>   
-                    <td><?php echo $genero = $res['genero'];;?></td>
-                    <td><?php echo $data = $res['data_nascimento']?"":date("Y-m-d", strtotime($data));;?></td>
-                    <td><?php echo $email = $res['email'];;?></td>
-                    <td><?php echo $rua = $res['numCasa'];;?></td>
-                    <td><?php echo $numCasa = $res['numCasa'];;?></td>
-                    <td><?php echo $bairro = $res['bairro'];;?></td>
-                    <td><?php echo $cep = $res['cep'];;?></td>
-                    <td><?php echo $cidade = $res['cidade'];;?></td>
-                    <td><?php echo $estado = $res['estado'];;?></td>
+                    <td><?php echo $id = $res['id'];?></td>
+                    <td><?php echo $nome = $res['nome'];?></td>
+                    <td><?php echo $cpf = $res['cpf'];?></td>   
+                    <td><?php echo $genero = $res['genero'];?></td>
+                    <td><?php echo $data = $res['dt_nascimento']?date("d-m-Y", strtotime($data)):"";?></td>
+                    <td><?php echo $email = $res['email'];?></td>
+                    <td><?php echo $rua = $res['rua'];?></td>
+                    <td><?php echo $numCasa = $res['numCasa'];?></td>
+                    <td><?php echo $bairro = $res['bairro'];?></td>
+                    <td><?php echo $cep = $res['cep'];?></td>
+                    <td><?php echo $cidade = $res['cidade'];?></td>
+                    <td><?php echo $estado = $res['estado'];?></td>
                 </tr>
             <?php }?>
 
