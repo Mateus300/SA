@@ -7,7 +7,7 @@
 ?>
 
 <?php 
-    $array_pesquisa = ['nome', 'e-mail'];
+    $array_pesquisa = ['id', 'nome', 'e-mail'];
 
     $flag = 0;
 
@@ -19,14 +19,16 @@
     if(isset($_POST['enviar'])){
         Crud::insert($erros);
 
-    }elseif(isset($_POST['alterar'])){
+    }
+    if(isset($_POST['alterar'])){
         Crud::update();
 
-    }elseif(isset($_POST['delete'])){
+    }
+    if(isset($_POST['delete'])){
 
         Crud::delete();
-    }elseif(isset($_POST['pesquisar'])){
-
+    }
+    if(isset($_POST['pesquisar'])){
             // $id = $_POST['id'];
             // $nome = $_POST['nome'];
             // $cpf = $_POST['cpf']; 
@@ -44,14 +46,17 @@
 
         $array_p = Crud::select($_POST['coluna'], $_POST['valor_pesquisa']);
 
-        foreach($array_p as $key => $re){
-            $resultado[$key] = $re;
-            
+        foreach($array_p as $re){
+            foreach($re as $key => $r){
+                $resultado[$key] = $r;
+            }
+
             $flag = 1;
         }
         
     }
-    var_dump($resultado);
+
+
 ?>
 
 <form action="#" method="post">
@@ -85,11 +90,11 @@
 
 <fieldset>
     <legend>Dados Pessoais:</legend>
-    <?= $resultado['nome']?>
+
         <div class="form-row">
             <div class="form-group col-md-3 text-left">
                 <label for="nome">Nome:</label>
-                <input type="text" class="form-control" name="nome" value="<?php echo $resultado['nome'];?>" id="nome" placeholder="Digite seu nome aqui..."/>
+                <input type="text" class="form-control" name="nome" value="<?= $resultado['nome'] ?>" id="nome" placeholder="Digite seu nome aqui..."/>
             </div>
 
             <div class="form-group col-md-3 text-left">
@@ -102,13 +107,13 @@
             <div class="form-group col-md-4 text-left">
                     <label for="genero">Genero:</label>
 
-                    <input type="radio" name="genero" id="masculino" <?=($resultado == 'masculino')?'checked':''?> value="masculino"/>
+                    <input type="radio" name="genero" id="masculino" <?=($resultado['genero'] == 'masculino')?'checked':''?> value="masculino"/>
                     <label for="masculino">Masculino</label>
 
-                    <input type="radio" name="genero" id="feminino" <?=($genero == 'feminino')?'checked':''?> value="feminino"/>
+                    <input type="radio" name="genero" id="feminino" <?=($resultado['genero'] == 'feminino')?'checked':''?> value="feminino"/>
                     <label for="feminino">Feminino</label>
 
-                    <input type="radio" name="genero" id="outro" <?=($genero == 'outro')?'checked':''?> value="outro"/>
+                    <input type="radio" name="genero" id="outro" <?=($resultado['genero'] == 'outro')?'checked':''?> value="outro"/>
                     <label for="outro">Outro</label>
             </div>    
         </div>
@@ -116,7 +121,7 @@
         <div class="form-row">
             <div class="form-group col-md-3 text-left">
                 <label for="dtNascimento">Data de nascimento:</label>
-                <input type="date" class="form-control" value="<?= empty($data)?"":date("Y-m-d", strtotime($data)) ?>" name="dtNascimento" id="dtNascimento"/>
+                <input type="date" class="form-control" value="<?= date("Y-m-d", strtotime($resultado['dt_nascimento']))?>" name="dtNascimento" id="dtNascimento"/>
             </div>
 
             <div class="form-group col-md-4 text-left">
@@ -160,30 +165,30 @@
             <label for="estado">Estado:</label>
             <select name="estado" id="estado" class="form-control">
                 <option value="" selected><--Selecione--></option>
-                <option value="AC" <?=($estado == 'AC')?'selected':''?>>AC</option>
-                <option value="AL" <?=($estado == 'AL')?'selected':''?>>AL</option>
-                <option value="AP" <?=($estado == 'AP')?'selected':''?>>AP</option>
-                <option value="AM" <?=($estado == 'AM')?'selected':''?>>AM</option>
-                <option value="BA" <?=($estado == 'BA')?'selected':''?>>BA</option>
-                <option value="CE" <?=($estado == 'CE')?'selected':''?>>CE</option>
-                <option value="DF" <?=($estado == 'DF')?'selected':''?>>DF</option>
-                <option value="ES" <?=($estado == 'ES')?'selected':''?>>ES</option>
-                <option value="GO" <?=($estado == 'GO')?'selected':''?>>GO</option>
-                <option value="MA" <?=($estado == 'MA')?'selected':''?>>MA</option>
-                <option value="MT" <?=($estado == 'MT')?'selected':''?>>MT</option>
-                <option value="MS" <?=($estado == 'MS')?'selected':''?>>MS</option>
-                <option value="MG" <?=($estado == 'MG')?'selected':''?>>MG</option>
-                <option value="PI" <?=($estado == 'PI')?'selected':''?>>PI</option>
-                <option value="RJ" <?=($estado == 'RJ')?'selected':''?>>RJ</option>
-                <option value="RS" <?=($estado == 'RS')?'selected':''?>>RS</option>
-                <option value="RN" <?=($estado == 'RN')?'selected':''?>>RN</option>
+                <option value="AC" <?=($resultado['estado'] == 'AC')?'selected':''?>>AC</option>
+                <option value="AL" <?=($resultado['estado'] == 'AL')?'selected':''?>>AL</option>
+                <option value="AP" <?=($resultado['estado'] == 'AP')?'selected':''?>>AP</option>
+                <option value="AM" <?=($resultado['estado'] == 'AM')?'selected':''?>>AM</option>
+                <option value="BA" <?=($resultado['estado'] == 'BA')?'selected':''?>>BA</option>
+                <option value="CE" <?=($resultado['estado'] == 'CE')?'selected':''?>>CE</option>
+                <option value="DF" <?=($resultado['estado'] == 'DF')?'selected':''?>>DF</option>
+                <option value="ES" <?=($resultado['estado'] == 'ES')?'selected':''?>>ES</option>
+                <option value="GO" <?=($resultado['estado'] == 'GO')?'selected':''?>>GO</option>
+                <option value="MA" <?=($resultado['estado'] == 'MA')?'selected':''?>>MA</option>
+                <option value="MT" <?=($resultado['estado'] == 'MT')?'selected':''?>>MT</option>
+                <option value="MS" <?=($resultado['estado'] == 'MS')?'selected':''?>>MS</option>
+                <option value="MG" <?=($resultado['estado'] == 'MG')?'selected':''?>>MG</option>
+                <option value="PI" <?=($resultado['estado'] == 'PI')?'selected':''?>>PI</option>
+                <option value="RJ" <?=($resultado['estado'] == 'RJ')?'selected':''?>>RJ</option>
+                <option value="RS" <?=($resultado['estado'] == 'RS')?'selected':''?>>RS</option>
+                <option value="RN" <?=($resultado['estado'] == 'RN')?'selected':''?>>RN</option>
             </select>
         </div>
     </div>
 </fieldset>
     <div class="form-row text-center">
         <div class="form-group col-md-7 text-right">
-            <?php if(flag == 0):?>
+            <?php if($flag == 0):?>
                 <input type="submit" name="enviar" value="Enviar" class="btn btn-primary text-center">
                 <input type="submit" name="verDados" value="Ver Dados" class="btn btn-primary text-center">
             <?php else:?>

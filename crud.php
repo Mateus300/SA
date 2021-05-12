@@ -158,19 +158,27 @@ class Crud{
     public static function update()
     {
         require_once "conexao.php";
-
-        $array = ['nome' => self::$nome, 'cpf' => self::$cpf, 'genero' => self::$genero, 'dt_nascimento' => self::$dtNascimento, 'email' => self::$email];
-        //$query = "INSERT INTO tb_pessoa (".implode(', ', array_keys($array)).") VALUES ('".implode("', '", array_values($array))."');";
-        $query1 = "UPDATE tb_pessoa SET nome=".$array['nome'].", cpf=".$array['cpf'].", genero=".$array['genero'].", dt_nascimento=".$array['dt_nascimento'].", email=".$array['email']." WHERE id=".$_POST['valor_pesquisa']."";
-        var_dump($query1);
-        $id_pessoa = $con->update_id; 
-        $query2 = "UPDATE tb_endereco SET rua=".self::$rua.", numCasa=".self::$numCasa.", bairro=".self::$bairro.", cep=".self::$cep.", cidade=".self::$cidade.", estado=".self::$estado." WHERE id=".$id_pessoa."";
+        $id_pessoa = [];
+        $array_pessoa = ['nome' => self::$nome, 'cpf' => self::$cpf, 'genero' => self::$genero, 'dt_nascimento' => self::$dtNascimento, 'email' => self::$email];
+        $array_endereco = ['rua' => self::$rua, 'numCasa' => self::$numCasa, 'bairro' => self::$bairro, 'cep' => self::$cep, 'cidade' => self::$cidade, 'estado' => self::$estado];
         
-        $update1 = $con->query($query1);
+        //Fazendo o select pra pegar o id de pessoa
+        $select = "SELECT id FROM tb_pessoa WHERE cpf = $array_pessoa[cpf]";
+        $query_select = $con->query($select);
+        foreach($query_select as $res){
+            $id_pessoa['id'] = $res['id'];
+        }
 
-        if($update1){ 
-            $update2 = $con->query($query2);
-            if($update2){
+        //$query = "INSERT INTO tb_pessoa (".implode(', ', array_keys($array)).") VALUES ('".implode("', '", array_values($array))."');";
+        $update1 = "UPDATE tb_pessoa SET nome='".$array_pessoa['nome']."', cpf='".$array_pessoa['cpf']."', genero='".$array_pessoa['genero']."', dt_nascimento='".$array_pessoa['dt_nascimento']."', email='".$array_pessoa['email']."' WHERE id=".$id_pessoa['id']."";
+        $query_update = $con->query($update1);
+
+        $update2 = "UPDATE tb_endereco SET rua='".$array_endereco['rua']."', numCasa='".$array_endereco['numCasa']."', bairro='".$array_endereco['bairro']."', cep='".$array_endereco['cep']."', cidade='".$array_endereco['cidade']."', estado='".$array_endereco['estado']."' WHERE id=".$id_pessoa['id']."";    
+
+        if($query_update){ 
+            $query_update2 = $con->query($update2);
+ 
+            if($query_update2){
                 echo "Alterado com sucesso!";
             }
         }else{
@@ -180,23 +188,27 @@ class Crud{
         $con->close();
     }
 
-    public static function delete($id)
+    public static function delete()
     {
         require_once "conexao.php";
-        
-        $query1 = "DELETE FROM tb_pessoa where id =".$_POST['valor_pesquisa']."";
-        $delete1 = $con->query($query1);
-        $id_pessoa = $con->query('SELECT id FROM tb_pessoa')->fetch_assoc()['id'];
 
-        var_dump($id_pessoa);
+        $array_pessoa = ['nome' => self::$nome, 'cpf' => self::$cpf, 'genero' => self::$genero, 'dt_nascimento' => self::$dtNascimento, 'email' => self::$email];
 
-        $resultado_estado = $con->query($id_estado);
-
-        foreach($resultado_estado as $res){
-            $array_estado[] = $res;
+        //Fazendo o select pra pegar o id de pessoa
+        $select = "SELECT id FROM tb_pessoa WHERE cpf = $array_pessoa[cpf]";
+        $query_select = $con->query($select);
+        foreach($query_select as $res){
+            $id_pessoa['id'] = $res['id'];
         }
 
-        $quer2 = "DELETE FROM tb_endereco where id_pessoa =".$id_pessoa."";
+        
+        $query1 = "DELETE FROM tb_endereco where id_pessoa =".$id_pessoa['id']."";
+
+        $delete1 = $con->query($query1);
+
+        var_dump($query1);
+
+        $query2 = "DELETE FROM tb_pessoa where id =".$id_pessoa['id']."";
 
         if($delete1){
             $delete2 = $con->query($query2);
@@ -221,7 +233,6 @@ class Crud{
             echo "Erro ao pesquisar!";
         }else{
             $query1 = "SELECT * FROM tb_pessoa as p inner join tb_endereco as e on p.id = e.id_pessoa where $coluna like '%$pesquisa%' limit 1";
-            echo $query1;
             $select1 = $con->query($query1);
 
             if($select1){
@@ -240,6 +251,18 @@ class Crud{
                     // $array_p = $re['cep'];
                     // $array_p = $re['cidade'];
                     // $array_p = $re['estado'];
+                }
+            }elseif($coluna == 'id'){
+                $query1 = "SELECT * FROM tb_pessoa as p inner join tb_endereco as e on p.id = e.id_pessoa where p.id = $pesquisa limit 1";
+                $select1 = $con->query($query1);
+
+                if($select1){
+                    $array_p = [];
+    
+                    foreach($select1 as $key => $re){
+                        $array_p[$key] = $re;
+                        
+                    }
                 }
             }else{
                 echo "Não foi possivel a pesquisar!";
